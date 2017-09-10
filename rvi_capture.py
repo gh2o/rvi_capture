@@ -9,7 +9,15 @@ import struct
 import sys
 import time
 
-cdll = ctypes.CDLL('libimobiledevice.so.6')
+for n in (6, 5, 4, 3, 2, 1, 0):
+    try:
+        cdll = ctypes.CDLL('libimobiledevice.so.{}'.format(n))
+        break
+    except OSError:
+        pass
+else:
+    raise OSError('libimobiledevice not found!')
+
 
 class LIDError(Exception):
     @classmethod

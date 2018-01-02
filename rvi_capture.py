@@ -281,7 +281,7 @@ def main():
     # open output file
     if args.outfile == '-':
         out_file = sys.stdout.buffer
-        while isinstance(out_file, io.BufferWriter):
+        while isinstance(out_file, io.BufferedWriter):
             out_file = out_file.detach()
     else:
         out_file = open(args.outfile, 'wb', 0)

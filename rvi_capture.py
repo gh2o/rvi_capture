@@ -50,7 +50,6 @@ def load_cdll():
     else:
         raise OSError('unsupported platform: {}'.format(sys.platform))
 
-
 cdll = load_cdll()
 
 
@@ -61,7 +60,17 @@ class LIDError(Exception):
             raise cls(err)
 
 class IDeviceError(LIDError):
-    pass
+    def __str__(self):
+        [code] = self.args
+        return 'Error in libimobiledevice: ' + {
+            0: 'Success',
+            -1: 'Invalid Argument',
+            -2: 'Unknown Error',
+            -3: 'No Device',
+            -4: 'Not Enough Data',
+            -5: 'Bad Header',
+            -6: 'SSL Error',
+        }.get(code, 'Missing Error')
 
 class LockdownError(LIDError):
     pass

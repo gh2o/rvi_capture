@@ -4,7 +4,10 @@ rvictl for Linux: capture packets sent/received by iOS devices
 A utility to create packet capture dumps from iOS devices; useful for debugging network activity via Wireshark.
 
 ## Prerequisites
+### Linux
 `libimobiledevice` and `python3` must be installed.
+### Windows
+`python3` and iTunes must be installed.
 
 ## Usage
 

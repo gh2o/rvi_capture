@@ -62,7 +62,7 @@ class LIDError(Exception):
 class IDeviceError(LIDError):
     def __str__(self):
         [code] = self.args
-        return 'Error in libimobiledevice: ' + {
+        err = 'Error in libimobiledevice: ' + {
             0: 'Success',
             -1: 'Invalid Argument',
             -2: 'Unknown Error',
@@ -71,6 +71,13 @@ class IDeviceError(LIDError):
             -5: 'Bad Header',
             -6: 'SSL Error',
         }.get(code, 'Missing Error')
+        if code == -3:
+            if sys.platform == 'linux':
+                err += ' (device not connected? usbmuxd not running?)'
+            elif sys.platform == 'win32':
+                err += ' (device not connected? iTunes not installed?)'
+        return err
+
 
 class LockdownError(LIDError):
     pass

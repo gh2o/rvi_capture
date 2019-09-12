@@ -44,8 +44,7 @@ def load_cdll():
             with ZipFile(dnld_zip) as zf:
                 zf.extractall(dnld_dir)
             os.rename(dnld_dir, imd_dir)
-        kern_dll = ctypes.CDLL('kernel32.dll')
-        kern_dll.SetDllDirectoryW(ctypes.c_wchar_p(imd_dir))
+        ctypes.windll.kernel32.SetDllDirectoryW(ctypes.c_wchar_p(imd_dir))
         return ctypes.CDLL(dll_path)
     else:
         raise OSError('unsupported platform: {}'.format(sys.platform))

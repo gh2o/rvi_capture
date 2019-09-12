@@ -9,14 +9,49 @@ import struct
 import sys
 import time
 
-for n in (6, 5, 4, 3, 2, 1, 0):
-    try:
-        cdll = ctypes.CDLL('libimobiledevice.so.{}'.format(n))
-        break
-    except OSError:
-        pass
-else:
-    raise OSError('libimobiledevice not found!')
+
+def load_cdll():
+    if sys.platform == 'linux':
+        for n in (6, 5, 4, 3, 2, 1, 0):
+            try:
+                return ctypes.CDLL('libimobiledevice.so.{}'.format(n))
+            except OSError:
+                pass
+        raise OSError('libimobiledevice not found!')
+    elif sys.platform == 'win32':
+        import hashlib
+        import tempfile
+        import shutil
+        import os
+        from zipfile import ZipFile
+        from urllib.request import urlopen
+        if sys.maxsize >> 32:
+            imd_url = 'https://qmcdn.blob.core.windows.net/imobiledevice/imobiledevice-x64-1.2.1-r223.zip'
+        else:
+            imd_url = 'https://qmcdn.blob.core.windows.net/imobiledevice/imobiledevice-x86-1.2.1-r223.zip'
+        imd_comp = 'imobiledevice-' + hashlib.sha1(imd_url.encode()).hexdigest()
+        imd_dir = os.path.join(tempfile.gettempdir(), imd_comp)
+        dll_path = os.path.join(imd_dir, 'imobiledevice.dll')
+        if not os.path.exists(dll_path):
+            print('Downloading libimobiledevice ...', file=sys.stderr)
+            dnld_dir = imd_dir + '-download'
+            dnld_zip = dnld_dir + '.zip'
+            with urlopen(imd_url) as in_fd, open(dnld_zip, 'wb') as out_fd:
+                shutil.copyfileobj(in_fd, out_fd)
+            print('Extracting libimobiledevice ...', file=sys.stderr)
+            shutil.rmtree(dnld_dir, ignore_errors=True)
+            shutil.rmtree(imd_dir, ignore_errors=True)
+            with ZipFile(dnld_zip) as zf:
+                zf.extractall(dnld_dir)
+            os.rename(dnld_dir, imd_dir)
+        kern_dll = ctypes.CDLL('kernel32.dll')
+        kern_dll.SetDllDirectoryW(ctypes.c_wchar_p(imd_dir))
+        return ctypes.CDLL(dll_path)
+    else:
+        raise OSError('unsupported platform: {}'.format(sys.platform))
+
+
+cdll = load_cdll()
 
 
 class LIDError(Exception):

@@ -139,6 +139,7 @@ class LockdownService(LIDContainer):
         return service_desc.contents[0]
 
 
+# based on https://opensource.apple.com/source/xnu/xnu-2050.48.11/bsd/net/iptap.h.auto.html
 HEADER_STRUCT = struct.Struct('>IBIBHBIII 16s I 17s I I 17s II')
 HEADER_SIZE = HEADER_STRUCT.size
 UB32 = struct.Struct('>I')

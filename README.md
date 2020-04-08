@@ -3,6 +3,8 @@ rvictl for Linux and Windows: capture packets sent/received by iOS devices
 
 A utility to create packet capture dumps from iOS devices; useful for debugging network activity via Wireshark.
 
+NOTE: There has been a major protocol change in iOS 13, so this will only work for iOS 12 and earlier.
+
 ## Prerequisites
 
 ### Linux

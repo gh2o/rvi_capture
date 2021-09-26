@@ -341,7 +341,7 @@ def main():
     parser = argparse.ArgumentParser(description='Captures packets from iOS devices.',
                                      formatter_class=HelpFormatter)
     parser.add_argument('--format',
-                        choices=('pcap', 'pcapng'), default='pcap',
+                        choices=('pcap', 'pcapng'), default='pcapng',
                         help='capture format')
     parser.add_argument('--udid', help='device UDID (if more than 1 device)')
     parser.add_argument('outfile', help='output file (- for stdout)')

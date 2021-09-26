@@ -20,10 +20,9 @@ Tested on Arch Linux with iOS 14.8.
 ./rvi_capture.py [--format {pcap,pcapng}] [--udid UDID] outfile
 ```
 * `--format`: capture format
-    * pcap: The default. Can be streamed directly to Wireshark. Packets sent on the cellular interface
-      are not Ethernet packets, and will have the source and destination MAC set to 00:00:00:00:00:00.
-    * pcapng: Newer, allows for distinguishing between interfaces, but Wireshark does not support 
-      treaming captures with this format.
+    * pcapng: The default. Newer and allows for distinguishing between interfaces.
+      Wireshark 3.0+ supports streaming captures with this format.
+    * pcap: Older format for compatibility.
 * `--udid`: device UDID  
   The specific device to target. If omitted, the first device found will be used.
 * `outfile`: output file or FIFO, or `-` for standard output.
@@ -32,5 +31,11 @@ Tested on Arch Linux with iOS 14.8.
 ```
 ./rvi_capture.py - | wireshark -k -i -
 ```
-Packets sent on the cellular interface can be filtered for via the filter
-`eth.src == 00:00:00:00:00:00 && eth.dst == 00:00:00:00:00:00`.
+
+### Tips
+- In Wireshark, you can filter for a particular network interface based on the
+  `frame.interface_name` field. Here are some possible values (as tested on iOS 14.8):
+  - `en0`: wifi interface
+  - `pdp_ip0`: cellular interface
+  - `ipsec1`: IPSec outer transport for VoLTE
+  - `ipsec3`: IPSec inner transport for VoLTE

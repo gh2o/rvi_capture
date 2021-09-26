@@ -13,10 +13,11 @@ import time
 def load_cdll():
     if sys.platform == 'linux':
         for n in (6, 5, 4, 3, 2, 1, 0):
-            try:
-                return ctypes.CDLL('libimobiledevice.so.{}'.format(n))
-            except OSError:
-                pass
+            for sfx in ('-1.0', ''):
+                try:
+                    return ctypes.CDLL('libimobiledevice{}.so.{}'.format(sfx, n))
+                except OSError:
+                    pass
         raise OSError('libimobiledevice not found!')
     elif sys.platform == 'win32':
         import hashlib

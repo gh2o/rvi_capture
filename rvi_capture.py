@@ -70,7 +70,8 @@ class IDeviceError(LIDError):
             -4: 'Not Enough Data',
             -5: 'Bad Header',
             -6: 'SSL Error',
-        }.get(code, 'Missing Error')
+            -7: 'Timeout',
+        }.get(code) or 'Unknown Error Code {}'.format(code)
         if code == -3:
             if sys.platform == 'linux':
                 err += ' (device not connected? usbmuxd not running?)'

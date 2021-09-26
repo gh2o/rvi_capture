@@ -229,6 +229,9 @@ class PacketExtractor(object):
         if if_type == 0xFF:
             is_eth = False  # cellular
             payload = payload[4:] # these lead with 4-byte protocol family that should be stripped
+        elif if_type == 0x01:
+            is_eth = False  # ipsec
+            payload = payload[4:]
         elif if_type == 0x06:
             is_eth = True   # wifi
         else:

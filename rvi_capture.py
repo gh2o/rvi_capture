@@ -117,11 +117,15 @@ class IDeviceConnection(LIDContainer):
         IDeviceError.check(cdll.idevice_connect(
             idevice.handle, ctypes.c_uint16(port), ctypes.byref(handle)))
         return handle
+    def enable_ssl(self):
+        IDeviceError.check(cdll.idevice_connection_enable_ssl(self.handle))
+    def disable_ssl(self):
+        IDeviceError.check(cdll.idevice_connection_disable_ssl(self.handle))
     def recv(self, num_bytes):
         out = bytes(num_bytes)
         out_bytes = ctypes.c_uint32(0)
         IDeviceError.check(self.idevice_connection_receive_timeout(
-            self.handle, out, num_bytes, ctypes.byref(out_bytes), ctypes.c_uint(500)))
+            self.handle, out, num_bytes, ctypes.byref(out_bytes), ctypes.c_uint(600 * 1000))) # 10 minutes
         return out[:out_bytes.value]
 
 class LockdownService(LIDContainer):
@@ -134,10 +138,18 @@ class LockdownService(LIDContainer):
             idevice.handle, ctypes.byref(handle), __file__))
         return handle
     def start_service(self, name):
-        service_desc = ctypes.POINTER(ctypes.c_uint16 * 2)()
+        service_desc_p = ctypes.POINTER(self.ServiceDescriptor)()
         LockdownError.check(cdll.lockdownd_start_service(
-            self.handle, name.encode(), ctypes.byref(service_desc)))
-        return service_desc.contents[0]
+            self.handle, name.encode(), ctypes.byref(service_desc_p)))
+        svc_port = service_desc_p.contents.port
+        svc_ssl = bool(service_desc_p.contents.ssl)
+        LockdownError.check(cdll.lockdownd_service_descriptor_free(service_desc_p))
+        return svc_port, svc_ssl
+    class ServiceDescriptor(ctypes.Structure):
+        _fields_ = [
+            ('port', ctypes.c_uint16),
+            ('ssl', ctypes.c_uint8),
+        ]
 
 
 # based on https://opensource.apple.com/source/xnu/xnu-2050.48.11/bsd/net/iptap.h.auto.html
@@ -166,8 +178,9 @@ class PacketExtractor(object):
 
     def __init__(self, udid=None):
         idevice = IDevice(udid=udid)
-        port = LockdownService(idevice).start_service('com.apple.pcapd')
+        port, ssl = LockdownService(idevice).start_service('com.apple.pcapd')
         self.conn = IDeviceConnection(idevice, port)    # keep reference to keep fd open
+        ssl and self.conn.enable_ssl()
 
     def __iter__(self):
         conn = self.conn

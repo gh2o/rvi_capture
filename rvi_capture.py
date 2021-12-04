@@ -27,9 +27,9 @@ def load_cdll():
         from zipfile import ZipFile
         from urllib.request import urlopen
         if sys.maxsize >> 32:
-            imd_url = 'https://qmcdn.blob.core.windows.net/imobiledevice/imobiledevice-x64-1.2.1-r223.zip'
+            imd_url = 'https://github.com/libimobiledevice-win32/imobiledevice-net/releases/download/v1.3.17/libimobiledevice.1.2.1-r1122-win-x64.zip'
         else:
-            imd_url = 'https://qmcdn.blob.core.windows.net/imobiledevice/imobiledevice-x86-1.2.1-r223.zip'
+            imd_url = 'https://github.com/libimobiledevice-win32/imobiledevice-net/releases/download/v1.3.17/libimobiledevice.1.2.1-r1122-win-x86.zip'
         imd_comp = 'imobiledevice-' + hashlib.sha1(imd_url.encode()).hexdigest()
         imd_dir = os.path.join(tempfile.gettempdir(), imd_comp)
         dll_path = os.path.join(imd_dir, 'imobiledevice.dll')

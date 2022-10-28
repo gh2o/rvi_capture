@@ -223,9 +223,9 @@ class PacketExtractor(object):
         [pid] = SL32.unpack(UB32.pack(pid))
         [epid] = SL32.unpack(UB32.pack(epid))
         [svc_class] = SL32.unpack(UB32.pack(svc_class))
-        iface_name = iface_name.rstrip(b'\0').decode('ascii') + str(if_unit)
-        comm = comm.rstrip(b'\0').decode('ascii')
-        ecomm = ecomm.rstrip(b'\0').decode('ascii')
+        iface_name = iface_name.rstrip(b'\0').decode('utf-8') + str(if_unit)
+        comm = comm.rstrip(b'\0').decode('utf-8')
+        ecomm = ecomm.rstrip(b'\0').decode('utf-8')
 
         if if_type == 0xFF:
             is_eth = False  # cellular

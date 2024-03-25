@@ -1,13 +1,13 @@
 # rvi_capture
-rvictl for Linux and Windows: capture packets sent/received by iOS devices
+rvictl for Linux, macOS, and Windows: capture packets sent/received by iOS devices
 
 A utility to create packet capture dumps from iOS devices; useful for debugging network activity via Wireshark.
 
-Tested on Arch Linux with iOS 14.8.
+Tested on Arch Linux with iOS 14.8 and macOS 13.1 with iOS 17.4.
 
 ## Prerequisites
 
-### Linux
+### Linux and macOS
 `libimobiledevice` and `python3` must be installed. Ensure that the `usbmuxd` daemon is running.
 
 ### Windows

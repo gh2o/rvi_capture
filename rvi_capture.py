@@ -8,6 +8,8 @@ import plistlib
 import struct
 import sys
 import time
+import shutil
+import os
 
 
 def load_cdll():
@@ -19,11 +21,23 @@ def load_cdll():
                 except OSError:
                     pass
         raise OSError('libimobiledevice not found!')
+    elif sys.platform == 'darwin':
+        if shutil.which ('ideviceinfo'):
+            lib_path = os.path.join(os.path.dirname(os.path.dirname((os.path.realpath(shutil.which('ideviceinfo'))))), 'lib')
+            for i in os.listdir(lib_path):
+                if i.startswith('libimobiledevice') and os.path.splitext(i)[1] == '.dylib' and not os.path.islink(i):
+                    try:
+                        return ctypes.CDLL(os.path.join(lib_path, i))
+                    except OSError:
+                        pass           
+            try:
+                return ctypes.CDLL(shutil.which ('ideviceinfo'))
+            except OSError:
+                pass
+        raise OSError('libimobiledevice not found!')  
     elif sys.platform == 'win32':
         import hashlib
         import tempfile
-        import shutil
-        import os
         from zipfile import ZipFile
         from urllib.request import urlopen
         if sys.maxsize >> 32:
